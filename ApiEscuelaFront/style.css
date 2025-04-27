@@ -1,0 +1,79 @@
+body {
+    background-color: #000000;
+    font-family: 'Fraktur', 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-image: url('reichsadler.png');
+    background-repeat: repeat;
+}
+
+h2 {
+    color: #FFFFFF;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    text-shadow: 2px 2px #000000;
+}
+
+form {
+    background-color: #1a1a1a;
+    padding: 40px;
+    border-radius: 0;
+    box-shadow: 0 0 20px rgba(255,255,255,0.5);
+    width: 100%;
+    max-width: 400px;
+    border: 2px solid #FFFFFF;
+}
+
+div {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    color: #FFFFFF;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #FFFFFF;
+    background-color: #2a2a2a;
+    color: #FFFFFF;
+    border-radius: 0;
+    box-sizing: border-box;
+}
+
+input:focus {
+    outline: none;
+    border-color: #8B0000;
+    background-color: #3a3a3a;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    background-color: #8B0000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 0;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1.2em;
+}
+
+button:hover {
+    background-color: #FFFFFF;
+    color: #8B0000;
+}

@@ -1,0 +1,37 @@
+body {
+    background-color: #000000;
+    font-family: 'Fraktur', 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('reichsadler.png');
+    background-repeat: repeat;
+}
+
+.welcomeContainer {
+    background-color: #1a1a1a;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #FFFFFF;
+    color: #FFFFFF;
+    font-size: 1.2em;
+}
+
+.nameUser {
+    font-weight: bold;
+    color: #8B0000;
+}
+
+#logout {
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 8px 15px;
+    border: 2px solid #FFFFFF;
+    transition: all 0.3s ease;
+}
+
+#logout:hover {
+    background-color: #8B0000;
+    border-color: #8B0000;
+}

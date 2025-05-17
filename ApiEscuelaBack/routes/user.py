@@ -2,6 +2,9 @@ from fastapi import APIRouter
 from models.user import session, InputUser, User, InputLogin, UserDetail, InputUserDetail
 from fastapi.responses import JSONResponse
 from psycopg2 import IntegrityError
+from sqlalchemy.orm import (
+   joinedload,
+)
 
 user = APIRouter()
 userDetail = APIRouter()
@@ -12,11 +15,15 @@ def welcome():
 
 
 @user.get("/users/all")
-def get_users():
+def obtener_usuarios():
    try:
-       return session.query(User).all()
-   except Exception as ex:
-       print(ex)
+       return session.query(User).options(joinedload(User.userdetail)).all()
+   except Exception as e:
+       print("Error al obtener usuarios:", e)
+       return JSONResponse(
+           status_code=500, content={"detail": "Error al obtener usuarios"}
+       )
+
 
 
 @user.get("/users/login/{n}")
@@ -28,17 +35,26 @@ def get_users_id(n: str):
 
 @user.post("/users/register")
 def crear_usuario(user: InputUser):
-   try:
-       # Si el usuario cumple con la validación, y no hay errores, lo agregamos.
-       if validate_username(user.username): 
-           usuNuevo = User(user.username, user.password)
-           session.add(usuNuevo)
-           session.commit()
-           return "usuario agregado"
+    try:
+       if validate_username(user.username):
+           if validate_email(user.email):
+               newUser = User(
+                   user.username,
+                   user.password,
+               )
+               newUserDetail = UserDetail(
+                   user.dni, user.firstname, user.lastname, user.type, user.email
+               )
+               newUser.userdetail = newUserDetail
+               session.add(newUser)
+               session.commit()
+               return "usuario agregado"
+           else:
+               return "el email ya existe"
        else:
            return "el usuario ya existe"
-   except IntegrityError as e:
-       # Suponiendo que el mje de error contiene "username" para el campo duplicado
+    except IntegrityError as e:
+       # Suponiendo que el msj de error contiene "username" para el campo duplicado
        if "username" in str(e):
            return JSONResponse(
                status_code=400, content={"detail": "Username ya existe"}
@@ -49,11 +65,14 @@ def crear_usuario(user: InputUser):
            return JSONResponse(
                status_code=500, content={"detail": "Error al agregar usuario"}
            )
-   except Exception as e:
+    except Exception as e:
+       session.rollback()
        print("Error inesperado:", e)
        return JSONResponse(
            status_code=500, content={"detail": "Error al agregar usuario"}
        )
+    finally:
+       session.close()
 
 
 
@@ -80,7 +99,16 @@ def validate_username(value):
        ##raise ValueError("Username already exists")
    else:
        return value
-   
+
+def validate_email(value):
+   existing_email = session.query(UserDetail).filter(UserDetail.email == value).first()
+   session.close()
+   if existing_email:
+       ##raise ValueError("Email already exists")
+       return None
+   else:
+       return value
+
 
 #region de userDetail
 @userDetail.get("/userdetail/all")

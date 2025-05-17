@@ -14,7 +14,7 @@ class User(Base):
    firstName = Column("firstName", String)
    lastName = Column("lastName", String)
    id_userdetail = Column(Integer, ForeignKey("userdetails.id"))
-   userdetail = relationship("UserDetail", backref="user", uselist=False)
+   userdetail = relationship("UserDetail", backref="usuarios", uselist=False)
 
    def __init__(
        self,

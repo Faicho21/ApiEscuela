@@ -1,7 +1,7 @@
 from config.db import engine, Base
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import sessionmaker
-from pydantic import BaseModel
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import sessionmaker, relationship
+from pydantic import BaseModel, EmailStr
 
 class User(Base):
 
@@ -13,7 +13,8 @@ class User(Base):
    password = Column("password", String)
    firstName = Column("firstName", String)
    lastName = Column("lastName", String)
-
+   id_userdetail = Column(Integer, ForeignKey("userdetails.id"))
+   userdetail = relationship("UserDetail", backref="user", uselist=False)
 
    def __init__(
        self,
@@ -30,6 +31,26 @@ class User(Base):
        self.lastName = lastName
 
 
+class UserDetail(Base):
+
+
+   __tablename__ = "userdetails"
+
+
+   id = Column("id", Integer, primary_key=True)
+   dni = Column("dni", Integer)
+   firstName = Column("firstName", String)
+   lastName = Column("lastName", String)
+   type = Column("type", String)
+   email = Column("email", String(80), nullable=False, unique=True)
+
+
+   def __init__(self, dni, firstName, lastName, type, email):
+       self.dni = dni
+       self.firstName = firstName
+       self.lastName = lastName
+       self.type = type
+       self.email = email
 
 
 Base.metadata.create_all(bind=engine)
@@ -44,12 +65,33 @@ session = Session()
 
 
 class InputUser(BaseModel):
-   id: int
    username: str
    password: str
-   firstName: str
-   lastName: str
+   email: EmailStr
+   dni: int
+   firstname: str
+   lastname: str
+   type: str
    
 class InputLogin(BaseModel):
     username: str
     password: str
+
+
+class InputUserDetail(BaseModel):
+   dni: int
+   firstName: str
+   lastName: str
+   type: str
+   email: str
+
+Base.metadata.drop_all(bind=engine)
+Base.metadata.create_all(bind=engine)
+
+
+# creo una clase tipo sessionmaker
+Session = sessionmaker(bind=engine)
+
+
+# instancio un objeto que apunte a cada clase Session
+session = Session()

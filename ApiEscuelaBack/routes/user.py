@@ -15,14 +15,30 @@ def welcome():
 
 
 @user.get("/users/all")
-def obtener_usuarios():
-   try:
-       return session.query(User).options(joinedload(User.userdetail)).all()
-   except Exception as e:
-       print("Error al obtener usuarios:", e)
-       return JSONResponse(
-           status_code=500, content={"detail": "Error al obtener usuarios"}
-       )
+def obtener_usuario_detalle():
+  try:
+      # Carga los detalles del usuario con unión
+      usuarios = session.query(User).options(joinedload(User.userdetail)).all()
+      # Convierte los usuarios en una lista de diccionarios
+      usuarios_con_detalles = []
+      for usuario in usuarios:
+          usuario_con_detalle = {
+              "id": usuario.id,
+              "username": usuario.username,
+              "email": usuario.userdetail.email,
+              "dni": usuario.userdetail.dni,
+              "first_name": usuario.userdetail.first_name,
+              "last_name": usuario.userdetail.last_name,
+              "type": usuario.userdetail.type,
+          }
+          usuarios_con_detalles.append(usuario_con_detalle)
+
+      return JSONResponse(status_code=200, content=usuarios_con_detalles)
+  except Exception as e:
+      print("Error al obtener usuarios:", e)
+      return JSONResponse(
+          status_code=500, content={"detail": "Error al obtener usuarios"}
+      )
 
 
 
@@ -48,9 +64,9 @@ def crear_usuario(user: InputUser):
                newUser.userdetail = newUserDetail
                session.add(newUser)
                session.commit()
-               return "usuario agregado"
+               return "Usuario agregado"
            else:
-               return "el email ya existe"
+               return "El email ya existe"
        else:
            return "el usuario ya existe"
     except IntegrityError as e:

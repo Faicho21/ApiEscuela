@@ -1,7 +1,7 @@
 from config.db import engine, Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 class User(Base):
 
@@ -11,31 +11,17 @@ class User(Base):
    id = Column("id", Integer, primary_key=True)
    username = Column("username", String)
    password = Column("password", String)
-   firstName = Column("firstName", String)
-   lastName = Column("lastName", String)
    id_userdetail = Column(Integer, ForeignKey("userdetails.id"))
-   userdetail = relationship("UserDetail", backref="usuarios", uselist=False)
+   userdetail = relationship("UserDetail", backref="user", uselist=False)
 
-   def __init__(
-       self,
-       id,
-       username,
-       password,
-       firstName,
-       lastName,
-   ):
-       self.id = id
+   def __init__(self,username,password):
        self.username = username
        self.password = password
-       self.firstName = firstName
-       self.lastName = lastName
 
 
 class UserDetail(Base):
 
-
    __tablename__ = "userdetails"
-
 
    id = Column("id", Integer, primary_key=True)
    dni = Column("dni", Integer)
@@ -53,21 +39,10 @@ class UserDetail(Base):
        self.email = email
 
 
-Base.metadata.create_all(bind=engine)
-
-
-Session = sessionmaker(bind=engine)  # creo una clase session
-
-
-session = Session()
-
-
-
-
 class InputUser(BaseModel):
    username: str
    password: str
-   email: EmailStr
+   email: str
    dni: int
    firstname: str
    lastname: str

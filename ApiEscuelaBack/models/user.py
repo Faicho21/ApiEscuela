@@ -3,11 +3,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import sessionmaker
 from pydantic import BaseModel
 
-
-
-
 class User(Base):
-
 
    __tablename__ = "usuarios"  # nombre de la tabla en la base de datos
 

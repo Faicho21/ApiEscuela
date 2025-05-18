@@ -41,7 +41,7 @@ function handleLoginFetch() {
 
 
 function loginProcess(dao) {
- console.log(dao);
+  console.log(dao);
  if (dao) {
    localStorage.setItem(
      "userData",

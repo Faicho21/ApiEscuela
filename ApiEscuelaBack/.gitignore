@@ -1,0 +1,27 @@
+# --------------------
+# Carpetas de entorno y configuración
+.vs/
+__pycache__/
+.env
+.env.*
+
+# --------------------
+# Archivos temporales / logs / sqlite
+*.py[cod]
+*.log
+*.sqlite3
+*.db
+
+# --------------------
+# Carpeta de configuración local (tu base de datos)
+config/
+
+# --------------------
+# Configuraciones de editor
+*.code-workspace
+.vscode/
+
+# --------------------
+# Archivos de sistema (Windows / Mac)
+.DS_Store
+Thumbs.db

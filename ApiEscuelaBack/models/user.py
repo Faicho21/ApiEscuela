@@ -16,6 +16,7 @@ class User(Base):
    id_userdetail = Column(Integer, ForeignKey("userdetails.id"))
    userdetail = relationship("UserDetail", backref="user", uselist=False)
    rmateria = relationship("Materia", back_populates="usuario", uselist=True)
+   npago = relationship("Pago", back_populates="user", uselist=True)
 
    def __init__(self,username,password):
        self.username = username

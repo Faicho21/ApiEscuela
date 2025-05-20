@@ -178,8 +178,8 @@ def get_userDetails():
 @userDetail.post("/userdetail/add")
 def add_usuarDetail(userDet: InputUserDetail):
    usuNuevo = UserDetail(
-   userDet.dni, userDet.firstName, userDet.lastName, userDet.type,           userDet.email
-   )
+   userDet.dni, userDet.firstName, userDet.lastName, userDet.type, userDet.email)
+   
    session.add(usuNuevo)
    session.commit()
    return "usuario detail agregado"

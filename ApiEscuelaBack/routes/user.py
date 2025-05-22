@@ -122,6 +122,7 @@ def welcome():
 
 
 @user.get("/users/login/{n}")
+
 def get_users_id(n: str):
    try:
        return session.query(User).filter(User.username == n).first()
@@ -131,6 +132,7 @@ def get_users_id(n: str):
 
 
 @user.post("/users/loginUser")
+
 def login_post(user: InputLogin):
    try:
        usu = User(user.username, user.password)

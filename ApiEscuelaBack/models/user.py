@@ -14,9 +14,11 @@ class User(Base):
    username = Column("username", String)
    password = Column("password", String)
    id_userdetail = Column(Integer, ForeignKey("userdetails.id"))
+   id_carrera = Column(Integer, ForeignKey("carreras.id"))
    userdetail = relationship("UserDetail", backref="user", uselist=False)
    rmateria = relationship("Materia", back_populates="usuario", uselist=True)
-   npago = relationship("Pago", back_populates="user", uselist=True)
+   pago = relationship("Pago", back_populates="user", uselist=True)
+   carrera = relationship("Carrera", uselist=False)
 
    def __init__(self,username,password):
        self.username = username
@@ -47,12 +49,14 @@ class UserDetail(Base):
 class Materia(Base):
    
    __tablename__ = "materias"
+   
    id= Column("id", Integer, primary_key=True)
    nombre=Column("nombre", String)
    estado=Column("estado", String)
-   user_id=Column("user_id", Integer, ForeignKey(User.id))
+   user_id=Column("user_id", Integer, ForeignKey("usuarios.id"))
    career_id=Column("carrer_id", Integer, nullable=True)
    usuario = relationship("User", back_populates="rmateria")
+   carrera = relationship("Carrera", back_populates="materias", uselist=False)
 
    def __init__(self, nombre, estado, user_id, career_id):
       self.nombre = nombre

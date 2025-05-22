@@ -10,7 +10,7 @@ class Carrera(Base):
     id = mapped_column("id", Integer, primary_key=True)
     nombre = mapped_column("nombre", String)
     estado = mapped_column("estado", String)
-    user_id = mapped_column(ForeignKey("users.id"))
+    user_id = mapped_column(ForeignKey("usuarios.id"))
     materias = relationship("Materia", back_populates="carrera")
     user = relationship("User", uselist=False, back_populates="carrera")
 
@@ -23,13 +23,7 @@ class NuevaCarrera(BaseModel):
     nombre: str
     estado: str
     user_id: int
-        
 
-Base.metadata.create_all(bind=engine)
-
-# creo una clase tipo sessionmaker
+# Eliminamos la creación de tablas de aquí
 Session = sessionmaker(bind=engine)
-
-
-# instancio un objeto que apunte a cada clase Session
 session = Session()

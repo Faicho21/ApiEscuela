@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from routes.user import user, userDetail, materia
+from routes.user import user, userDetail
+from routes.materia import materia
 from routes.pago import pago
 from routes.carrera import carrera
 from fastapi.middleware.cors import CORSMiddleware

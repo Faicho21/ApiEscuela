@@ -14,7 +14,7 @@ pago = APIRouter()
 def nuevo_pago(pago: NuevoPago):
     try:
         nuevo_pago = Pago(
-            career_id=pago.career_id,
+            carrera_id=pago.carrera_id,
             user_id=pago.user_id,
             monto=pago.monto,
             mes=pago.mes

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from models.user import session, InputUser, User, InputLogin, UserDetail, InputUserDetail,ImputMateria,Materia
+from models.user import session, InputUser, User, InputLogin, UserDetail, InputUserDetail
 from fastapi.responses import JSONResponse
 from psycopg2 import IntegrityError
 from sqlalchemy.orm import (
@@ -8,45 +8,6 @@ from sqlalchemy.orm import (
 
 user = APIRouter()
 userDetail = APIRouter()
-materia = APIRouter()
-
-
-@materia.post("/RMateria")
-def ingresar_materia(materia: ImputMateria):
-    try:
-        new_materia = Materia(materia.nombre, materia.estado,materia.user_id,materia.career_id)
-        session.add(new_materia)
-        session.commit()
-        return "materia agregada"
-    except Exception as e:
-       session.rollback()
-       print("Error inesperado:", e)
-       return JSONResponse(
-           status_code=500, content={"detail": "Error al agregar materia"}
-       )
-    finally:
-       session.close()
-
-@materia.get("/misMaterias")
-def consultar_materias():
-    try:
-        materias = session.query(Materia).options(joinedload(Materia.usuario)).all()
-        ver_materias = []
-        for materia in materias:
-            ver_materia = {
-                "id": materia.id,
-                "nombre": materia.nombre,
-                "estado": materia.estado,
-                "user_id": materia.user_id,
-                "career_id": materia.career_id,
-            }
-            ver_materias.append(ver_materia)
-        return JSONResponse(status_code=200, content=ver_materias)
-    except Exception as e:
-        print("Error al obtener materias:", e)
-        return JSONResponse(
-            status_code=500, content={"detail": "Error al obtener materias"}
-        )
 
 @user.get("/users/all")
 def obtener_usuario_detalle():
@@ -122,7 +83,6 @@ def welcome():
 
 
 @user.get("/users/login/{n}")
-
 def get_users_id(n: str):
    try:
        return session.query(User).filter(User.username == n).first()
@@ -130,9 +90,7 @@ def get_users_id(n: str):
        return ex
 
 
-
 @user.post("/users/loginUser")
-
 def login_post(user: InputLogin):
    try:
        usu = User(user.username, user.password)
@@ -186,4 +144,4 @@ def add_usuarDetail(userDet: InputUserDetail):
    session.commit()
    return "usuario detail agregado"
 
-#endregion de userDetail
+#endregion de userDetail

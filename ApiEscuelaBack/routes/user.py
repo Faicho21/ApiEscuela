@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from models.user import session, InputUser, User, InputLogin, UserDetail, InputUserDetail
 from fastapi.responses import JSONResponse
 from psycopg2 import IntegrityError
+from auth.segridad import Seguridad
 from sqlalchemy.orm import (
    joinedload,
 )
@@ -89,6 +90,25 @@ def get_users_id(n: str):
    except Exception as ex:
        return ex
 
+@user.post("/users/login")
+def login_user(us: InputLogin):
+   try:
+       user = session.query(User).filter(User.username == us.username).first()
+       if user and user.password == us.password:
+           token = Seguridad.generar_token(user)
+           res = {"status": "success",
+                   "token": token,
+                   "user": user.userdetail,
+                   "message":"User logged in successfully!"}
+           return res
+       
+       else:
+           res = {"message": "Invalid username or password"}
+           return JSONResponse(status_code=401, content=res)
+   except Exception as ex:
+       print("Error ---->> ", ex)
+   finally:
+       session.close()
 
 @user.post("/users/loginUser")
 def login_post(user: InputLogin):

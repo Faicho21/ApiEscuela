@@ -14,7 +14,7 @@ __pycache__/
 
 # --------------------
 # Carpeta de configuración local (tu base de datos)
-config/
+ApiEscuelaBack/config/
 
 # --------------------
 # Configuraciones de editor

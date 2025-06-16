@@ -17,6 +17,7 @@ api_escu.include_router(materia)
 api_escu.include_router(pago)
 api_escu.include_router(carrera)
 
+
 # Middleware para permitir CORS
 api_escu.add_middleware(
    CORSMiddleware,

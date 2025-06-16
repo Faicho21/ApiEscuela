@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from models.carrera import Carrera, NuevaCarrera, session
+
 from fastapi.responses import JSONResponse
 from psycopg2 import IntegrityError
 from sqlalchemy.orm import (
@@ -23,3 +24,4 @@ def nueva_carrera(carrera: NuevaCarrera):
         return JSONResponse(status_code=400, content={"message": "Error al crear la carrera"})
     finally:
         session.close()
+

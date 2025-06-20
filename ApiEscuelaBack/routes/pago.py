@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from models.pago import Pago, NuevoPago, session
 from models.user import User
+from auth.seguridad import Seguridad
 from fastapi.responses import JSONResponse
 from psycopg2 import IntegrityError
 from sqlalchemy.orm import (
@@ -10,7 +11,6 @@ from sqlalchemy.orm import (
 pago = APIRouter()
 
 @pago.post("/pago")
-
 def nuevo_pago(pago: NuevoPago):
     try:
         nuevo_pago = Pago(
@@ -28,18 +28,14 @@ def nuevo_pago(pago: NuevoPago):
     finally:
         session.close()
 
-@pago.get("/pago/misPagos{_username}")
-
-def ver_mispagos(_username: str):
-    try:
-        userEncontrado = session.query(User).filter(User.username == _username).first()
-        if(userEncontrado):
-            return userEncontrado.pago
+@pago.get("/pago/VerPagos")
+def ver_mispagos(user_id: int, req: Request):
+    has_access = Seguridad.verificar_token(req.headers)
+    if "iat" in has_access:
+        usuario = session.query(User).filter(User.id == user_id).first()
+        if usuario:
+            return usuario.pago
         else:
-            return "usuario no encontrado"
-    except Exception as e:
-        session.rollback()
-        print("Error al traer usuario y/o pagos")
-    
-    finally:
-        session.close()
+            return JSONResponse(status_code=404, content={"success": False, "message": "Usuario no encontrado"})
+    else:
+        return JSONResponse(status_code=401, content=has_access)

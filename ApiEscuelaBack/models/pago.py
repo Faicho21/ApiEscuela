@@ -30,6 +30,13 @@ class NuevoPago(BaseModel):
    mes: datetime.datetime
    creado_en: datetime.datetime = datetime.datetime.now()
 
-# Eliminamos la creación de tablas de aquí
+class VerPagos(BaseModel):
+    id: int
+    carrera_id: int
+    user_id: int
+    monto: int
+    mes: datetime.datetime
+    creado_en: datetime.datetime
+
 Session = sessionmaker(bind=engine)
 session = Session()

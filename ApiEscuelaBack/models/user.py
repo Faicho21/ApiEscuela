@@ -16,7 +16,8 @@ class User(Base):
    userdetail = relationship("UserDetail", backref="user", uselist=False)
    rmateria = relationship("Materia", back_populates="usuario", uselist=True)
    pago = relationship("Pago", back_populates="user", uselist=True)
-   carrera = relationship("Carrera", back_populates="user", uselist=False)
+   pivoteCarrera = relationship("UsuarioCarrera", back_populates="user")
+   
 
    def __init__(self,username,password):
        self.username = username
@@ -67,6 +68,5 @@ class InputUserDetail(BaseModel):
 
 #endregion
 
-# Eliminamos la creación de tablas de aquí
 Session = sessionmaker(bind=engine)
 session = Session()

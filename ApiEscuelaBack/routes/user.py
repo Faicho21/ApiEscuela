@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Request
-<<<<<<< HEAD
 from models.user import (
     session,
     InputUser,
@@ -8,9 +7,6 @@ from models.user import (
     UserDetail,
     InputUserDetail,
 )
-=======
-from models.user import (session, InputUser, User,InputLogin, UserDetail, InputUserDetail)
->>>>>>> 69f95d5dc9afdc708356947d9caf60b368a31db0
 from fastapi.responses import JSONResponse
 from psycopg2 import IntegrityError
 from auth.seguridad import Seguridad
@@ -89,7 +85,6 @@ def get_users_id(n: str):
     except Exception as ex:
         return ex
 
-<<<<<<< HEAD
 
 @user.post("/users/login")
 def login_user(us: InputLogin):
@@ -112,8 +107,6 @@ def login_user(us: InputLogin):
         print("Error ---->> ", ex)
     finally:
         session.close()
-=======
->>>>>>> 69f95d5dc9afdc708356947d9caf60b368a31db0
 
 @user.post("/users/login")
 def login_user(us: InputLogin):

@@ -1,4 +1,5 @@
 import datetime, pytz, jwt
+from fastapi import Header, HTTPException
 
 class Seguridad:
     secret = "tu_clave_secreta"
@@ -12,19 +13,13 @@ class Seguridad:
         payload = {
             "iat": cls.hoy(),
             "usuario": authUser.username,
-<<<<<<< HEAD
-            "rol"
-=======
-            "rol": authUser.rol,
-            "nombre": authUser.firstName,
->>>>>>> 69f95d5dc9afdc708356947d9caf60b368a31db0
+            "rol": authUser.userdetail.type,
             "exp": cls.hoy() + datetime.timedelta(minutes=480)  # 48 horas de validez
         }
         token = jwt.encode(payload, cls.secret, algorithm="HS256")
         return token
 
     @classmethod
-<<<<<<< HEAD
     def verificar_token(cls, header):
         if header["authorization"] :
             token = header["authorization"].split(" ")[1]
@@ -39,13 +34,10 @@ class Seguridad:
                 return {"success": False, "message": "Error al decodificar el token"}
             except Exception as e:
                 return {"success": False, "message": "Token: error desconocido"}
-=======
-    def verificar_token(token):
-        try:
-            payload = jwt.decode(token, Seguridad.secret, algorithms=["HS256"])
-            return payload["usuario"]
-        except jwt.ExpiredSignatureError:
-            return None
-        except jwt.InvalidTokenError:
-            return None
->>>>>>> 69f95d5dc9afdc708356947d9caf60b368a31db0
+            
+def obtener_usuario_desde_token(authorization: str = Header(...)):
+    token = authorization.split(" ")[1]
+    payload = Seguridad.verificar_token({"authorization": f"Bearer {token}"})
+    if isinstance(payload, dict) and payload.get("success") is False:
+        raise HTTPException(status_code=401, detail=payload["message"])
+    return payload  # contiene usuario, rol, etc.

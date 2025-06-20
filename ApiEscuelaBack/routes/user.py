@@ -9,7 +9,11 @@ from models.user import (
 )
 from fastapi.responses import JSONResponse
 from psycopg2 import IntegrityError
+<<<<<<< HEAD
 from auth.seguridad import Seguridad
+=======
+from auth.segridad import Seguridad
+>>>>>>> 338c133694b7153aca6eb1035d3baf33a2a34f9f
 from sqlalchemy.orm import (
     joinedload, load_only,
 )
@@ -108,6 +112,25 @@ def login_user(us: InputLogin):
     finally:
         session.close()
 
+@user.post("/users/login")
+def login_user(us: InputLogin):
+   try:
+       user = session.query(User).filter(User.username == us.username).first()
+       if user and user.password == us.password:
+           token = Seguridad.generar_token(user)
+           res = {"status": "success",
+                   "token": token,
+                   "user": user.userdetail,
+                   "message":"User logged in successfully!"}
+           return res
+       
+       else:
+           res = {"message": "Invalid username or password"}
+           return JSONResponse(status_code=401, content=res)
+   except Exception as ex:
+       print("Error ---->> ", ex)
+   finally:
+       session.close()
 
 @user.post("/users/loginUser")
 def login_post(userIn: InputLogin):

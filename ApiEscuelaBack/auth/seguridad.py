@@ -12,6 +12,8 @@ class Seguridad:
         payload = {
             "iat": cls.hoy(),
             "usuario": authUser.username,
+            "rol": authUser.rol,
+            "nombre": authUser.firstName,
             "exp": cls.hoy() + datetime.timedelta(minutes=480)  # 48 horas de validez
         }
         token = jwt.encode(payload, cls.secret, algorithm="HS256")

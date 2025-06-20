@@ -28,7 +28,11 @@ function Login() {
       localStorage.setItem("token", dataObject.token ?? "");
       localStorage.setItem("user", JSON.stringify(dataObject.user));
       setMessage("Initiating session...");
+<<<<<<< HEAD
       navigate("/Home");
+=======
+      navigate("/dashboard");
+>>>>>>> 69f95d5dc9afdc708356947d9caf60b368a31db0
     } else {
       setMessage(dataObject.message ?? "Unknown error");
     }

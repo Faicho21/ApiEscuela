@@ -12,13 +12,19 @@ class Seguridad:
         payload = {
             "iat": cls.hoy(),
             "usuario": authUser.username,
+<<<<<<< HEAD
             "rol"
+=======
+            "rol": authUser.rol,
+            "nombre": authUser.firstName,
+>>>>>>> 69f95d5dc9afdc708356947d9caf60b368a31db0
             "exp": cls.hoy() + datetime.timedelta(minutes=480)  # 48 horas de validez
         }
         token = jwt.encode(payload, cls.secret, algorithm="HS256")
         return token
 
     @classmethod
+<<<<<<< HEAD
     def verificar_token(cls, header):
         if header["authorization"] :
             token = header["authorization"].split(" ")[1]
@@ -33,3 +39,13 @@ class Seguridad:
                 return {"success": False, "message": "Error al decodificar el token"}
             except Exception as e:
                 return {"success": False, "message": "Token: error desconocido"}
+=======
+    def verificar_token(token):
+        try:
+            payload = jwt.decode(token, Seguridad.secret, algorithms=["HS256"])
+            return payload["usuario"]
+        except jwt.ExpiredSignatureError:
+            return None
+        except jwt.InvalidTokenError:
+            return None
+>>>>>>> 69f95d5dc9afdc708356947d9caf60b368a31db0

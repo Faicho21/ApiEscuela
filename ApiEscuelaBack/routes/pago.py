@@ -12,6 +12,7 @@ pago = APIRouter()
 
 @pago.post("/pago")
 def nuevo_pago(pago: NuevoPago):
+    
     try:
         nuevo_pago = Pago(
             carrera_id=pago.carrera_id,

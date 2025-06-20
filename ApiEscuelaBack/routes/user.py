@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request
+<<<<<<< HEAD
 from models.user import (
     session,
     InputUser,
@@ -7,6 +8,9 @@ from models.user import (
     UserDetail,
     InputUserDetail,
 )
+=======
+from models.user import (session, InputUser, User,InputLogin, UserDetail, InputUserDetail)
+>>>>>>> 69f95d5dc9afdc708356947d9caf60b368a31db0
 from fastapi.responses import JSONResponse
 from psycopg2 import IntegrityError
 from auth.seguridad import Seguridad
@@ -85,6 +89,31 @@ def get_users_id(n: str):
     except Exception as ex:
         return ex
 
+<<<<<<< HEAD
+
+@user.post("/users/login")
+def login_user(us: InputLogin):
+    try:
+        user = session.query(User).filter(User.username == us.username).first()
+        if user and user.password == us.password:
+            token = Seguridad.generar_token(user)
+            res = {
+                "status": "success",
+                "token": token,
+                "user": user.userdetail,
+                "message": "User logged in successfully!",
+            }
+            return res
+
+        else:
+            res = {"message": "Invalid username or password"}
+            return JSONResponse(status_code=401, content=res)
+    except Exception as ex:
+        print("Error ---->> ", ex)
+    finally:
+        session.close()
+=======
+>>>>>>> 69f95d5dc9afdc708356947d9caf60b368a31db0
 
 @user.post("/users/login")
 def login_user(us: InputLogin):
@@ -108,25 +137,6 @@ def login_user(us: InputLogin):
     finally:
         session.close()
 
-@user.post("/users/login")
-def login_user(us: InputLogin):
-   try:
-       user = session.query(User).filter(User.username == us.username).first()
-       if user and user.password == us.password:
-           token = Seguridad.generar_token(user)
-           res = {"status": "success",
-                   "token": token,
-                   "user": user.userdetail,
-                   "message":"User logged in successfully!"}
-           return res
-       
-       else:
-           res = {"message": "Invalid username or password"}
-           return JSONResponse(status_code=401, content=res)
-   except Exception as ex:
-       print("Error ---->> ", ex)
-   finally:
-       session.close()
 
 @user.post("/users/loginUser")
 def login_post(userIn: InputLogin):

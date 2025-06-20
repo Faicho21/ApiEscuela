@@ -9,11 +9,7 @@ from models.user import (
 )
 from fastapi.responses import JSONResponse
 from psycopg2 import IntegrityError
-<<<<<<< HEAD
 from auth.seguridad import Seguridad
-=======
-from auth.segridad import Seguridad
->>>>>>> 338c133694b7153aca6eb1035d3baf33a2a34f9f
 from sqlalchemy.orm import (
     joinedload, load_only,
 )

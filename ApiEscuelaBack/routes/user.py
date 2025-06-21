@@ -1,12 +1,5 @@
 from fastapi import APIRouter, Request
-from models.user import (
-    session,
-    InputUser,
-    User,
-    InputLogin,
-    UserDetail,
-    InputUserDetail,
-)
+from models.user import (session,InputUser,User,InputLogin,UserDetail,InputUserDetail,InputRegister)
 from fastapi.responses import JSONResponse
 from psycopg2 import IntegrityError
 from auth.seguridad import Seguridad
@@ -32,7 +25,7 @@ def obtener_usuarios(req: Request):
 
 
 @user.post("/users/register")
-def crear_usuario(user: InputUser):
+def crear_usuario(user: InputRegister):
     try:
         if validate_username(user.username):
             if validate_email(user.email):

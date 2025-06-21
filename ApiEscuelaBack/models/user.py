@@ -33,7 +33,7 @@ class UserDetail(Base):
    dni = Column("dni", Integer)
    firstName = Column("firstName", String)
    lastName = Column("lastName", String)
-   type = Column("type", String)
+   type = Column("type", String (50),)  # Ejemplo: "alumno", "profesor", "administrativo"
    email = Column("email", String(80), nullable=False, unique=True)
 
 
@@ -64,6 +64,11 @@ class InputUserDetail(BaseModel):
    firstName: str
    lastName: str
    type: str
+   email: str
+
+class InputRegister(BaseModel):
+   username: str
+   password: str
    email: str
 
 #endregion

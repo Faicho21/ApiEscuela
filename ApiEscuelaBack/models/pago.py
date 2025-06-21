@@ -1,6 +1,6 @@
 from config.db import engine, Base
-from sqlalchemy import Integer, ForeignKey, DateTime
-from sqlalchemy.orm import sessionmaker, mapped_column, relationship
+from sqlalchemy import Integer, ForeignKey, DateTime, Column
+from sqlalchemy.orm import sessionmaker, relationship
 from pydantic import BaseModel
 import datetime
 
@@ -8,12 +8,12 @@ class Pago(Base):
    
    __tablename__ = "pagos"
 
-   id = mapped_column("id", Integer, primary_key=True)
-   carrera_id = mapped_column(ForeignKey("carreras.id"))
-   user_id = mapped_column(ForeignKey("usuarios.id"))
-   monto = mapped_column(Integer)
-   mes = mapped_column(DateTime)
-   creado_en = mapped_column(DateTime, default=datetime.datetime.now())
+   id = Column("id", Integer, primary_key=True)
+   carrera_id = Column(ForeignKey("carreras.id"))
+   user_id = Column(ForeignKey("usuarios.id"))
+   monto = Column(Integer)
+   mes = Column(DateTime)
+   creado_en = Column(DateTime, default=datetime.datetime.now())
    user = relationship("User", uselist=False, back_populates="pago")
    carrera = relationship("Carrera", uselist=False)
 

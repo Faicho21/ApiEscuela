@@ -13,7 +13,7 @@ pago = APIRouter()
 
 @pago.post("/nuevoPago") # Ruta protegida para que el ADMIN ingrese un nuevo pago
 def nuevo_pago(pago: NuevoPago, payload: dict = Depends(obtener_usuario_desde_token)):
-    if payload["rol"] != "Admin":
+    if payload["type"] != "Admin":
         raise JSONResponse(status_code=403, detail="No tienes permiso para ingresar pagos")
         
     

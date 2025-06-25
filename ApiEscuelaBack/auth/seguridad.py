@@ -1,45 +1,77 @@
-import datetime, pytz, jwt
-from models.user import User  
-from fastapi import Header
-from fastapi.responses import JSONResponse 
+import jwt
+from datetime import datetime, timedelta
+from fastapi import HTTPException, status, Header
+from typing import Dict, Any
+from models.user import User
 
 class Seguridad:
+    # NOTA: Esta clave debe ir en variable de entorno en producción
     secret = "tu_clave_secreta"
-    
-    @classmethod
-    def hoy(cls):
-        return datetime.datetime.now(pytz.timezone("America/Buenos_Aires")) # Método para obtener la fecha y hora actual en Buenos Aires
 
     @classmethod
-    def generar_token(cls, authUser : User): # Método para generar un token JWT
-        payload = {
-            "iat": cls.hoy(),
-            "usuario": authUser.username,
-            "rol": authUser.userdetail.type,
-            "exp": cls.hoy() + datetime.timedelta(minutes=480)  # 48 horas de validez
-        }
-        token = jwt.encode(payload, cls.secret, algorithm="HS256")
-        return token
+    def generar_token(cls, user: User) -> str:
+        try:
+            payload = {
+                "sub": str (user.id),  # subject del token, generalmente el ID del usuario
+                "username": user.username,
+                "type": user.userdetail.type,
+                "exp": datetime.utcnow() + timedelta(days=1),
+                "iat": datetime.utcnow(),
+            }
+            token = jwt.encode(payload, cls.secret, algorithm="HS256")
+
+            # Asegurarse de devolver string
+            if isinstance(token, bytes):
+                token = token.decode("utf-8")
+
+            print("[DEBUG] Token generado:", token)
+            return token
+        except Exception as e:
+            print("[ERROR] Al generar token:", e)
+            return ""
 
     @classmethod
-    def verificar_token(cls, header):
-        if header["authorization"] :
-            token = header["authorization"].split(" ")[1]
-            try:
-                payload = jwt.decode(token, cls.secret, algorithms=["HS256"])
-                return payload
-            except jwt.ExpiredSignatureError:
-                return {"success": False, "message": "Token expirado"}
-            except jwt.InvalidTokenError:
-                return {"success": False, "message": "Token inválido"}
-            except jwt.DecodeError:
-                return {"success": False, "message": "Error al decodificar el token"}
-            except Exception as e:
-                return {"success": False, "message": "Token: error desconocido"}
-            
-def obtener_usuario_desde_token(authorization: str = Header(...)): # Función para obtener el usuario desde el token JWT
-    token = authorization.split(" ")[1]
-    payload = Seguridad.verificar_token({"authorization": f"Bearer {token}"})
-    if isinstance(payload, dict) and payload.get("success") is False: 
-        return JSONResponse(status_code=401, detail=payload["message"])
-    return payload  # contiene usuario, rol, etc.
+    def verificar_token(cls, header: Dict[str, str]) -> Dict[str, Any]:
+        if "authorization" not in header:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="No se proporcionó token de autorización."
+            )
+
+        try:
+            token_type, token = header["authorization"].split(" ")
+
+            if token_type.lower() != "bearer":
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Formato de token incorrecto. Se espera 'Bearer <token>'."
+                )
+
+            print("[DEBUG] Token recibido:", token)
+
+            payload = jwt.decode(token, cls.secret, algorithms=["HS256"])
+            print("[DEBUG] Payload decodificado:", payload)
+            return payload
+
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="Token expirado.")
+        except jwt.DecodeError:
+            raise HTTPException(status_code=401, detail="Error al decodificar el token.")
+        except jwt.InvalidTokenError:
+            raise HTTPException(status_code=401, detail="Token inválido.")
+        except ValueError:
+            raise HTTPException(
+                status_code=401,
+                detail="Formato de cabecera de autorización incorrecto."
+            )
+        except Exception as e:
+            print("[ERROR] Verificación de token falló:", e)
+            raise HTTPException(
+                status_code=500,
+                detail="Error interno del servidor al verificar el token."
+            )
+
+# Dependencia para FastAPI
+async def obtener_usuario_desde_token(authorization: str = Header(...)) -> Dict[str, Any]:
+    headers = {"authorization": authorization}
+    return Seguridad.verificar_token(headers)

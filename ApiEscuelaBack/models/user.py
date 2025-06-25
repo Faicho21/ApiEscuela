@@ -2,6 +2,7 @@ from config.db import engine, Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
 from pydantic import BaseModel
+from typing import Optional
 
 
 #regionUSER
@@ -51,8 +52,8 @@ class InputUser(BaseModel):
    password: str
    email: str
    dni: int
-   firstname: str
-   lastname: str
+   firstName: str
+   lastName: str
    type: str
    
 class InputLogin(BaseModel):
@@ -65,6 +66,13 @@ class InputUserDetail(BaseModel):
    lastName: str
    type: str
    email: str
+
+class UserDetailUpdate(BaseModel):
+    dni: Optional[int] = None
+    firstName: Optional[str] = None
+    lastName: Optional[str] = None
+    type: Optional[str] = None  # "alumno", "profesor", etc.
+    email: Optional[str]  = None
 
 class InputRegister(BaseModel):
    username: str

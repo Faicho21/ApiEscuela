@@ -5,6 +5,7 @@ from models.user import User, UserDetail
 from models.carrera import Carrera
 from models.materia import Materia
 from models.pago import Pago
+from models.carreraUsuario import UsuarioCarrera
 
 # Crear todas las tablas en el orden correcto
 def init_db():
@@ -14,5 +15,6 @@ def init_db():
         UserDetail.__table__,
         Carrera.__table__,
         Materia.__table__,
-        Pago.__table__
+        Pago.__table__,
+        UsuarioCarrera.__table__
     ]) 

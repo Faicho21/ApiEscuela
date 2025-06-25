@@ -8,7 +8,7 @@ from sqlalchemy.orm import (
 carrera = APIRouter()
 
 @carrera.post("/nuevaCarrera")
-def nueva_carrera(carrera: NuevaCarrera):
+def nueva_carreras(carrera: NuevaCarrera):
     try:
         nueva_carrera = Carrera(
             nombre=carrera.nombre,
@@ -23,3 +23,4 @@ def nueva_carrera(carrera: NuevaCarrera):
         return JSONResponse(status_code=400, content={"message": "Error al crear la carrera"})
     finally:
         session.close()
+

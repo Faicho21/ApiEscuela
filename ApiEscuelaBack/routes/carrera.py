@@ -9,7 +9,7 @@ from sqlalchemy.orm import (
 carrera = APIRouter()
 
 @carrera.post("/nuevaCarrera")
-def nueva_carrera(carrera: NuevaCarrera):
+def nueva_carreras(carrera: NuevaCarrera):
     try:
         nueva_carrera = Carrera(
             nombre=carrera.nombre,

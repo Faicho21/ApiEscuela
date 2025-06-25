@@ -1,5 +1,9 @@
 from config.db import engine, Base
+<<<<<<< HEAD
 from sqlalchemy import Integer, ForeignKey, DateTime, Column
+=======
+from sqlalchemy import Integer, ForeignKey, DateTime,Column
+>>>>>>> main
 from sqlalchemy.orm import sessionmaker, relationship
 from pydantic import BaseModel
 import datetime
@@ -9,8 +13,13 @@ class Pago(Base):
    __tablename__ = "pagos"
 
    id = Column("id", Integer, primary_key=True)
+<<<<<<< HEAD
    user_id = Column(ForeignKey("usuarios.id"))
    carrera_id = Column(ForeignKey("carreras.id"))
+=======
+   carrera_id = Column(ForeignKey("carreras.id"))
+   user_id = Column(ForeignKey("usuarios.id"))
+>>>>>>> main
    monto = Column(Integer)
    mes = Column(DateTime)
    creado_en = Column(DateTime, default=datetime.datetime.now())
@@ -27,8 +36,16 @@ class NuevoPago(BaseModel):
    carrera_id: int
    user_id: int
    monto: int
-   mes: datetime.datetime
+   mes: datetime.datetime 
    creado_en: datetime.datetime = datetime.datetime.now()
+
+class VerPagos(BaseModel):
+    id: int
+    carrera_id: int
+    user_id: int
+    monto: int
+    mes: datetime.datetime
+    creado_en: datetime.datetime 
 
 # Eliminamos la creación de tablas de aquí
 Session = sessionmaker(bind=engine)

@@ -1,16 +1,26 @@
 from fastapi import APIRouter, Request
+<<<<<<< HEAD
 from auth.security import Security
 from models.user import (session,InputUser,User,InputLogin,UserDetail,InputUserDetail,)
 from models.pivote_user_carrera import PivoteUserCareer, InputUserAddCareer
+=======
+from models.user import session, InputUser, User, InputLogin, UserDetail, InputUserDetail
+>>>>>>> main
 from fastapi.responses import JSONResponse
 from psycopg2 import IntegrityError
+from auth.seguridad import Seguridad
 from sqlalchemy.orm import (
+<<<<<<< HEAD
     joinedload,
+=======
+   joinedload,load_only
+>>>>>>> main
 )
 
 user = APIRouter()
 userDetail = APIRouter()
 
+<<<<<<< HEAD
 
 @user.get("/")
 def welcome():
@@ -152,6 +162,154 @@ def addCareer(ins: InputUserAddCareer):
         traceback.print_exc()
     finally:
         session.close()
+=======
+@user.get("/")
+def welcome():
+   return "Bienvenido!!"
+
+@user.get("/users/all/sintoken")  # Ruta sin token
+def obtener_usuario_detalle():
+  try:
+      # Carga los detalles del usuario con unión
+      usuarios = session.query(User).options(joinedload(User.userdetail)).all()
+      # Convierte los usuarios en una lista de diccionarios
+      usuarios_con_detalles = []
+      for usuario in usuarios:
+          usuario_con_detalle = {
+              "id": usuario.id,
+              "username": usuario.username,
+              "dni": usuario.userdetail.dni,
+              "first_Name": usuario.userdetail.firstName,
+              "last_Name": usuario.userdetail.lastName,
+              "type": usuario.userdetail.type,
+              "email": usuario.userdetail.email,
+          }
+          usuarios_con_detalles.append(usuario_con_detalle)
+
+      return JSONResponse(status_code=200, content=usuarios_con_detalles)
+  except Exception as e:
+      print("Error al obtener usuarios:", e)
+      return JSONResponse(
+          status_code=500, content={"detail": "Error al obtener usuarios"}
+      )
+
+@user.post("/users/register")   #Ruta Propia para registrar usuarios
+def crear_usuario(user: InputUser):
+    try:
+       if validate_username(user.username):
+           if validate_email(user.email):
+               newUser = User(
+                   user.username,
+                   user.password,
+               )
+               newUserDetail = UserDetail(
+                   user.dni, user.firstname, user.lastname, user.type, user.email
+               )
+               newUser.userdetail = newUserDetail
+               session.add(newUser)
+               session.commit()
+               return "Usuario agregado"
+           else:
+               return "El email ya existe"
+       else:    
+           return "el usuario ya existe"
+    except IntegrityError as e:
+       # Suponiendo que el msj de error contiene "username" para el campo duplicado
+       if "username" in str(e):
+           return JSONResponse(
+               status_code=400, content={"detail": "Username ya existe"}
+           )
+       else:
+           # Maneja otros errores de integridad
+           print("Error de integridad inesperado:", e)
+           return JSONResponse(
+               status_code=500, content={"detail": "Error al agregar usuario"}
+           )
+    except Exception as e:
+       session.rollback()
+       print("Error inesperado:", e)
+       return JSONResponse(
+           status_code=500, content={"detail": "Error al agregar usuario"}
+       )
+    finally:
+       session.close()
+
+@user.get("/users/all") # Ruta protegida con token
+def obtener_usuarios(req: Request):
+   has_access = Seguridad.verificar_token(req.headers)
+   if "iat" in has_access:
+       usuarios = session.query(User).options(load_only(User.username),joinedload(User.userdetail)).all() 
+       return usuarios
+   else:
+       return JSONResponse(
+           status_code=401,
+           content=has_access,
+       )
+
+
+
+@user.post("/users/login") # Ruta para iniciar sesion ejemplo
+def login_user(us: InputLogin):
+   try:
+       user = session.query(User).options(joinedload(User.userdetail)).filter(User.username == us.username).first()
+       if user and user.password == us.password:
+           token = Seguridad.generar_token(user)
+           if not token:
+               return JSONResponse(status_code=500, content={"message": "Error generating token"},)
+                      
+           res = {"status": "success",
+                   "token": token,
+                   "user": user.userdetail,
+                   "message":"User logged in successfully!"}
+           return res
+       
+       else:
+           res = {"message": "Invalid username or password"}
+           return JSONResponse(status_code=401, content=res)
+   except Exception as ex:
+       print("Error ---->> ", ex)
+   finally:
+       session.close()
+
+@user.post("/users/loginUser") # Inicio de Sesion que devuelve un token
+def login_post(userIn: InputLogin):
+   try:
+       user = session.query(User).filter(User.username == userIn.username).first()
+       if not user.password == userIn.password:
+           return JSONResponse(
+               status_code=401,
+               content={
+                   "success": False,
+                   "message": "Usuario y/o password incorrectos!",
+               },
+           )
+       else:
+           authDat = Seguridad.generar_token(user)
+           if not authDat:
+               return JSONResponse(
+                   status_code=401,
+                   content={
+                       "success": False,
+                       "message": "Error de generación de token!",
+                   },
+               )
+           else:
+               return JSONResponse(
+                   status_code=200, content={"success": True, "token": authDat}
+               )
+
+
+   except Exception as e:
+       print(e)
+       return JSONResponse(
+           status_code=500,
+           content={
+               "success": False,
+               "message": "Error interno del servidor",
+           },
+       )
+
+>>>>>>> main
 
 
 def validate_username(value):

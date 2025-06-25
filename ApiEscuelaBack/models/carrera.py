@@ -7,14 +7,22 @@ class Carrera(Base):
     
     __tablename__ = "carreras"
 
+<<<<<<< HEAD
     id = Column ("id", Integer, primary_key=True)
+=======
+    id = Column("id", Integer, primary_key=True)
+>>>>>>> main
     nombre = Column("nombre", String)
     estado = Column("estado", String)
     user_id = Column(ForeignKey("usuarios.id"))
     materias = relationship("Materia", back_populates="carrera")
     user = relationship("User", uselist=False, back_populates="carrera")
+<<<<<<< HEAD
     career = relationship("PivoteUserCareer", back_populates="career", uselist=False)
    
+=======
+    userspivote = relationship("UsuarioCarrera", back_populates="carrera")
+>>>>>>> main
 
 
     def __init__(self, nombre, estado, user_id,):

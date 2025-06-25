@@ -17,7 +17,11 @@ class User(Base):
    rmateria = relationship("Materia", back_populates="usuario", uselist=True)
    pago = relationship("Pago", back_populates="user", uselist=True)
    carrera = relationship("Carrera", back_populates="user", uselist=False)
+<<<<<<< HEAD
    pivoteusercareer = relationship("PivoteUserCareer", back_populates="user")
+=======
+   pivoteCarrera = relationship("UsuarioCarrera", back_populates="user", uselist=True)
+>>>>>>> main
 
    def __init__(self,username,password):
        self.username = username
@@ -33,7 +37,7 @@ class UserDetail(Base):
    dni = Column("dni", Integer)
    firstName = Column("firstName", String)
    lastName = Column("lastName", String)
-   type = Column("type", String)
+   type = Column("type", String, nullable=False) #no puede ser nulo
    email = Column("email", String(80), nullable=False, unique=True)
 
 

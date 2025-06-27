@@ -65,7 +65,7 @@ def actualizar_parcial_userdetail(
         session.close()
 
 # prueba
-@user.post("/users/register1")
+@user.post("/users/register")
 def crear_usuario(user: InputRegister):
     try:
         # Validar si el username ya existe
@@ -79,7 +79,7 @@ def crear_usuario(user: InputRegister):
                     dni=None,
                     firstName=None,
                     lastName=None,
-                    type="alumno",  # Podés dejar esto en blanco o poner un valor por defecto
+                    type="Alumno",  # Podés dejar esto en blanco o poner un valor por defecto
                     email=user.email,
                 )
 
@@ -111,20 +111,19 @@ def crear_usuario(user: InputRegister):
         session.close()
 
 @user.get("/users/all")  # Ruta protegida con token
-def obtener_usuarios(req: Request):
-    has_access = Seguridad.verificar_token(req.headers)
-    if "iat" in has_access:
+def obtener_usuarios(payload: dict = Depends(obtener_usuario_desde_token)):
+    
+    if payload["type"] not in ["Admin"]:
+        raise HTTPException(status_code=403, detail="No tienes permiso para ver los usuarios")
+    try:
         usuarios = (
             session.query(User)
             .options(load_only(User.username), joinedload(User.userdetail))
             .all()
         )
         return usuarios
-    else:
-        return JSONResponse(
-            status_code=401,
-            content=has_access,
-        )
+    finally:
+        session.close()
 
 @user.get("/")
 def welcome():
@@ -137,49 +136,6 @@ def get_users_id(n: str):
     except Exception as ex:
         return ex
 
-@user.post("/users/login")
-def login_user(us: InputLogin):
-    try:
-        user = session.query(User).filter(User.username == us.username).first()
-        if user and user.password == us.password:
-            token = Seguridad.generar_token(user)
-            res = {
-                "status": "success",
-                "token": token,
-                "user": user.userdetail,
-                "message": "User logged in successfully!",
-            }
-            return res
-
-        else:
-            res = {"message": "Invalid username or password"}
-            return JSONResponse(status_code=401, content=res)
-    except Exception as ex:
-        print("Error ---->> ", ex)
-    finally:
-        session.close()
-
-@user.post("/users/login")
-def login_user(us: InputLogin):
-    try:
-        user = session.query(User).filter(User.username == us.username).first()
-        if user and user.password == us.password:
-            token = Seguridad.generar_token(user)
-            res = {
-                "status": "success",
-                "token": token,
-                "user": user.userdetail,
-                "message": "User logged in successfully!",
-            }
-            return res
-
-        else:
-            res = {"message": "Invalid username or password"}
-            return JSONResponse(status_code=401, content=res)
-    except Exception as ex:
-        print("Error ---->> ", ex)
-    finally:
-        session.close()
 
 @user.post("/users/loginUser")
 def login_post(userIn: InputLogin):
@@ -261,6 +217,28 @@ def add_usuarDetail(userDet: InputUserDetail):
 
 # endregion de userDetail
 #region rutas sin uso
+@user.post("/users/login")
+def login_user(us: InputLogin):
+    try:
+        user = session.query(User).filter(User.username == us.username).first()
+        if user and user.password == us.password:
+            token = Seguridad.generar_token(user)
+            res = {
+                "status": "success",
+                "token": token,
+                "user": user.userdetail,
+                "message": "User logged in successfully!",
+            }
+            return res
+
+        else:
+            res = {"message": "Invalid username or password"}
+            return JSONResponse(status_code=401, content=res)
+    except Exception as ex:
+        print("Error ---->> ", ex)
+    finally:
+        session.close()
+
 @user.get("/users/all/NOSOTROS")
 def obtener_usuario_detalle(req: Request):
     try:
@@ -290,7 +268,7 @@ def obtener_usuario_detalle(req: Request):
             status_code=500, content={"detail": "Error al obtener usuarios"}
         )
         
-@user.post("/users/register")
+@user.post("/users/Register")
 def crear_usuario(user: InputRegister):
     try:
         if validate_username(user.username):

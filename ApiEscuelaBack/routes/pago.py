@@ -35,7 +35,7 @@ def nuevo_pago(pago: NuevoPago, payload: dict = Depends(obtener_usuario_desde_to
 
 @pago.delete("/eliminarPago/{pago_id}") # Ruta protegida para que el ADMIN elimine un pago
 def eliminar_pago(pago_id: int, payload: dict = Depends(obtener_usuario_desde_token)):
-    if payload["rol"] != "Admin":
+    if payload["type"] != "Admin":
         raise JSONResponse(status_code=403, detail="Solo el administrador puede eliminar pagos")
 
     try:
@@ -51,7 +51,7 @@ def eliminar_pago(pago_id: int, payload: dict = Depends(obtener_usuario_desde_to
 
 @pago.put("/editarPago/{pago_id}") # Ruta protegida para que el ADMIN modifique un pago
 def modificar_pago(pago_id: int, pago: NuevoPago, payload: dict = Depends(obtener_usuario_desde_token)):
-    if payload["rol"] != "Admin":
+    if payload["type"] != "Admin":
         raise JSONResponse(status_code=403, detail="Solo el administrador puede modificar pagos")
     
     try:
@@ -71,7 +71,7 @@ def modificar_pago(pago_id: int, pago: NuevoPago, payload: dict = Depends(obtene
         
 @pago.get("/pago/todos")       #para que el ADMIN vea TODOS los pagos
 def ver_todos_los_pagos(payload: dict = Depends(obtener_usuario_desde_token)):
-    if payload["rol"] not in ["Admin"]:
+    if payload["type"] not in ["Admin"]:
         raise JSONResponse(status_code=403, detail="No tienes permiso para ver los pagos")
     
     try:
@@ -82,7 +82,7 @@ def ver_todos_los_pagos(payload: dict = Depends(obtener_usuario_desde_token)):
         
 @pago.get("/pago/mis_pagos")     #para que un alumno vea sus pagos
 def ver_mis_pagos(payload: dict = Depends(obtener_usuario_desde_token)):
-    if payload["rol"] != "Alumno":
+    if payload["type"] != "Alumno":
         raise JSONResponse(status_code=403, detail="Solo los alumnos puede ver estos pagos")
     
     try:

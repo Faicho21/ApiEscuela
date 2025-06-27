@@ -2,6 +2,7 @@ from config.db import engine, Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
 from pydantic import BaseModel
+from typing import Optional
 
 
 #regionUSER
@@ -16,7 +17,8 @@ class User(Base):
    userdetail = relationship("UserDetail", backref="user", uselist=False)
    rmateria = relationship("Materia", back_populates="usuario", uselist=True)
    pago = relationship("Pago", back_populates="user", uselist=True)
-   carrera = relationship("Carrera", back_populates="user", uselist=False)
+   pivoteCarrera = relationship("UsuarioCarrera", back_populates="user")
+   
 
    def __init__(self,username,password):
        self.username = username
@@ -32,7 +34,7 @@ class UserDetail(Base):
    dni = Column("dni", Integer)
    firstName = Column("firstName", String)
    lastName = Column("lastName", String)
-   type = Column("type", String)
+   type = Column("type", String (50),)  # Ejemplo: "alumno", "profesor", "administrativo"
    email = Column("email", String(80), nullable=False, unique=True)
 
 
@@ -50,8 +52,8 @@ class InputUser(BaseModel):
    password: str
    email: str
    dni: int
-   firstname: str
-   lastname: str
+   firstName: str
+   lastName: str
    type: str
    
 class InputLogin(BaseModel):
@@ -65,8 +67,19 @@ class InputUserDetail(BaseModel):
    type: str
    email: str
 
+class UserDetailUpdate(BaseModel):
+    dni: Optional[int] = None
+    firstName: Optional[str] = None
+    lastName: Optional[str] = None
+    type: Optional[str] = None  # "alumno", "profesor", etc.
+    email: Optional[str]  = None
+
+class InputRegister(BaseModel):
+   username: str
+   password: str
+   email: str
+
 #endregion
 
-# Eliminamos la creación de tablas de aquí
 Session = sessionmaker(bind=engine)
 session = Session()

@@ -6,7 +6,7 @@ import Login from './views/Login'
 import MainLayout from './layouts/MainLayaut'
 
 function App() {
- const Dashboard = lazy(() => import('./views/Dashboard'))
+ const Home = lazy(() => import('./views/Home'))
 
 
   return (
@@ -19,7 +19,7 @@ function App() {
 
        <Route element={<ProtectedRoute />}>
         <Route element={<MainLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/Home" element={<Home />} />
         </Route>
        </Route>
      </Routes>
@@ -27,4 +27,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

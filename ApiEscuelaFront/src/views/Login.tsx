@@ -24,11 +24,11 @@ function Login() {
   const [showRegister, setShowRegister] = useState(false);
 
   function loginProcess(dataObject: LoginProcessResponse) {
-    if (dataObject.status === "success") {
-      localStorage.setItem("token", dataObject.token ?? "");
+    if (dataObject.status === "success"){
+      localStorage.setItem("token", dataObject.token ?? ""); 
       localStorage.setItem("user", JSON.stringify(dataObject.user));
       setMessage("Initiating session...");
-      navigate("/Home");
+      navigate("/home");
     } else {
       setMessage(dataObject.message ?? "Unknown error");
     }

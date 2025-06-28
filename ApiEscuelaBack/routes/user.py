@@ -1,21 +1,9 @@
 from fastapi import APIRouter, Request, Depends, HTTPException
-from models.user import (
-    session,
-    InputUser,
-    User,
-    InputLogin,
-    UserDetail,
-    InputUserDetail,
-    InputRegister,
-    UserDetailUpdate,
-)
+from models.user import (session,InputUser,User,InputLogin,UserDetail,InputUserDetail,InputRegister,UserDetailUpdate)
 from fastapi.responses import JSONResponse
 from psycopg2 import IntegrityError
 from auth.seguridad import obtener_usuario_desde_token, Seguridad
-from sqlalchemy.orm import (
-    joinedload,
-    load_only,
-)
+from sqlalchemy.orm import (joinedload,load_only)
 
 user = APIRouter()
 userDetail = APIRouter()

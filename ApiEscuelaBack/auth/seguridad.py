@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from fastapi import HTTPException, status, Header
 from typing import Dict, Any
 from models.user import User
+from zoneinfo import ZoneInfo
 
 class Seguridad:
     # NOTA: Esta clave debe ir en variable de entorno en producción
@@ -11,12 +12,15 @@ class Seguridad:
     @classmethod
     def generar_token(cls, user: User) -> str:
         try:
+            zona_arg = ZoneInfo("America/Argentina/Buenos_Aires")
+            ahora = datetime.now(zona_arg)
+
             payload = {
                 "sub": str (user.id),  # subject del token, generalmente el ID del usuario
                 "username": user.username,
                 "type": user.userdetail.type,
-                "exp": datetime.utcnow() + timedelta(days=1),
-                "iat": datetime.utcnow(),
+                "exp": ahora + timedelta(days=1), # Expira en 1 día
+                "iat": ahora,
             }
             token = jwt.encode(payload, cls.secret, algorithm="HS256")
 

@@ -22,16 +22,14 @@ class UserCarreraCreate(BaseModel):
     user_id: int
     carrera_id: int
     
-    class Config:
-        orm_mode = True
+   
 
 class UserCarreraResponse(BaseModel):
     id: int
     user_id: int
     carrera_id: int
 
-    class Config:
-        orm_mode = True
+   
 
 
 Session = sessionmaker(bind=engine)

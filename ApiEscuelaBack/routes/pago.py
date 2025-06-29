@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Depends
 from auth.seguridad import obtener_usuario_desde_token
-from models.pago import Pago, NuevoPago, session
+from models.pago import Pago, NuevoPago, session, VerPagos
 from models.user import User
 from auth.seguridad import Seguridad
 from fastapi.responses import JSONResponse
@@ -68,8 +68,8 @@ def modificar_pago(pago_id: int, pago: NuevoPago, payload: dict = Depends(obtene
         return {"message": "Pago modificado correctamente"}
     finally:
         session.close()
-        
-@pago.get("/pago/todos")       #para que el ADMIN vea TODOS los pagos
+
+@pago.get("/pago/todos", response_model=list[VerPagos])       #para que el ADMIN vea TODOS los pagos
 def ver_todos_los_pagos(payload: dict = Depends(obtener_usuario_desde_token)):
     if payload["type"] not in ["Admin"]:
         raise JSONResponse(status_code=403, detail="No tienes permiso para ver los pagos")

@@ -37,6 +37,8 @@ class VerPagos(BaseModel):
     monto: int
     mes: datetime.datetime
     creado_en: datetime.datetime
+    class Config:
+        from_attributes = True
 
 Session = sessionmaker(bind=engine)
 session = Session()
